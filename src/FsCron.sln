@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCron", "FsCron.fsproj", "{898ED023-F3B9-4D23-87B4-3A4A8E438D9D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{22C259C3-C21C-4EC3-9617-2AE8F3D49CC3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FsCron.TestApp", "..\test\FsCron.TestApp\FsCron.TestApp.csproj", "{70CB7A4C-6EB8-4F1E-8D93-224170C09E9C}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCron.UnitTests", "..\test\FsCron.UnitTests\FsCron.UnitTests.fsproj", "{71DFD314-5A40-4919-AFDB-8C8A0EFFF596}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{898ED023-F3B9-4D23-87B4-3A4A8E438D9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{898ED023-F3B9-4D23-87B4-3A4A8E438D9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{898ED023-F3B9-4D23-87B4-3A4A8E438D9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{898ED023-F3B9-4D23-87B4-3A4A8E438D9D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70CB7A4C-6EB8-4F1E-8D93-224170C09E9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70CB7A4C-6EB8-4F1E-8D93-224170C09E9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70CB7A4C-6EB8-4F1E-8D93-224170C09E9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70CB7A4C-6EB8-4F1E-8D93-224170C09E9C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71DFD314-5A40-4919-AFDB-8C8A0EFFF596}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71DFD314-5A40-4919-AFDB-8C8A0EFFF596}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71DFD314-5A40-4919-AFDB-8C8A0EFFF596}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71DFD314-5A40-4919-AFDB-8C8A0EFFF596}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{70CB7A4C-6EB8-4F1E-8D93-224170C09E9C} = {22C259C3-C21C-4EC3-9617-2AE8F3D49CC3}
+		{71DFD314-5A40-4919-AFDB-8C8A0EFFF596} = {22C259C3-C21C-4EC3-9617-2AE8F3D49CC3}
+	EndGlobalSection
+EndGlobal
