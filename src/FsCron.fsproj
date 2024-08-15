@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Model\*.fs" />
     <Compile Include="CronHelper.fs" />
     <Compile Include="Scheduler.fs" />
   </ItemGroup>
