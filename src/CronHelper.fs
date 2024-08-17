@@ -47,3 +47,27 @@ let ParseCron(str: string) =
     if not(isValid) || not(month > 0 && month < 13) then
         failwith "invalid month"*)
     ()
+
+let NextRun (cronDef: string) (now: DateTimeOffset) =
+    let parts = cronDef.Split()
+    if parts.Length <> 5 then
+        failwith "Invalid length"
+
+    let mutable date = Date()
+    (*let dayOfWeek =
+        match parts[4] with
+        | "0" -> WeekDay.Sunday
+        | "1" -> WeekDay.Monday
+        | "2" -> WeekDay.Tuesday
+        | "3" -> WeekDay.Wednesday
+        | "4" -> WeekDay.Thursday
+        | "5" -> WeekDay.Friday
+        | "6" -> WeekDay.Saturday
+        | "*" -> WeekDay.All
+        | _ -> failwith "invalid day of week"
+
+    let month =
+        match parts[3] with
+        | "*" -> Month.All
+        | _ -> Enum.Parse<Month>(parts[3])*)
+    ()
