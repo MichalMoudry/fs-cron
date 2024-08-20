@@ -1,5 +1,6 @@
 ﻿namespace FsCron
 
+open System
 open System.Threading
 
 [<Sealed>]
@@ -8,8 +9,14 @@ type Scheduler() =
         while true do
             printfn "TODO: Run job check"
             Thread.Sleep(1000)
+
+    member this.NewJob (cronDef: string) (job: Action) =
+        ()
+
     member this.Start() =
-        let thread = Thread(ThreadStart(startInternal))
+        (*let thread = Thread(ThreadStart(startInternal))
         thread.IsBackground <- true
-        thread.Start()
+        thread.Start()*)
+        ()
+
     member this.Stop() = ()

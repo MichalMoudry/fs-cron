@@ -53,21 +53,17 @@ let NextRun (cronDef: string) (now: DateTimeOffset) =
     if parts.Length <> 5 then
         failwith "Invalid length"
 
-    let mutable date = Date()
-    (*let dayOfWeek =
+    let mutable date = Date(1990, 1, 1)
+    date.Day <-
         match parts[4] with
-        | "0" -> WeekDay.Sunday
-        | "1" -> WeekDay.Monday
-        | "2" -> WeekDay.Tuesday
-        | "3" -> WeekDay.Wednesday
-        | "4" -> WeekDay.Thursday
-        | "5" -> WeekDay.Friday
-        | "6" -> WeekDay.Saturday
-        | "*" -> WeekDay.All
-        | _ -> failwith "invalid day of week"
-
-    let month =
-        match parts[3] with
-        | "*" -> Month.All
-        | _ -> Enum.Parse<Month>(parts[3])*)
+        | "0" -> 7
+        | "1" -> 1
+        | "2" -> 2
+        | "3" -> 3
+        | "4" -> 4
+        | "5" -> 5
+        | "6" -> 6
+        | "*" -> date.Day
+        | _ -> failwith "Invalid day of week"
+    let test = date.ToDateTime()
     ()
