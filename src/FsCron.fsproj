@@ -15,9 +15,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="Model\*.fs" />
-    <Compile Include="CronHelper.fs" />
+    <Compile Include="JobDefinition.fs" />
     <Compile Include="Scheduler.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Cronos" Version="0.8.4" />
   </ItemGroup>
 
 </Project>

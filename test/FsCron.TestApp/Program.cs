@@ -1,5 +1,4 @@
-﻿// See https://aka.ms/new-console-template for more information
-using FsCron;
+﻿using FsCron;
 
 Console.WriteLine("Hello, World!");
 
@@ -8,7 +7,7 @@ scheduler.NewJob("* * * * *", () =>
 {
     Console.WriteLine($"[{DateTimeOffset.Now}] Echo");
 });
-scheduler.Start();
+scheduler.Start(false);
 
 Console.WriteLine("Press any key to exit...");
 Console.ReadLine();
