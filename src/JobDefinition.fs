@@ -4,7 +4,7 @@ open System.Threading
 open Cronos
 open System
 
-type internal JobDefinition(cronExp: CronExpression, work: Action) =
+type internal JobDefinition(cronExp: ICronExpression, work: Action) =
     let threadStart() =
         let nextOccurrence = cronExp.GetNextOccurrence(
             DateTimeOffset.Now,
