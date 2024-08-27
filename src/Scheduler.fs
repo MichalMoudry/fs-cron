@@ -26,24 +26,20 @@ type Scheduler() =
 
     /// Method for initializing the scheduler and starting all its jobs.
     member this.Start isParallel =
-        if jobs.Count = 0 then
-            ()
-        else
-            while true do
-                //let now = DateTimeOffset.Now
-                for job in jobs do
-                    if Math.Round((job.CurrentDate - DateTimeOffset.Now).TotalSeconds) = 0 then
-                        //job.Execute() |> ignore
-                        printfn "[Execute]"
-                    else
-                        printfn $"[{DateTimeOffset.Now}] => {job.CurrentDate}"
-                    ()
-                (*let now = DateTimeOffset.Now
-                for job in jobs do
-                    if job.CurrentDate = now then
-                        job.Execute() |> Async.AwaitTask |> Async.RunSynchronously
-                    else
-                        printfn $"{now} | {job.CurrentDate} => {(now - job.CurrentDate).TotalSeconds}"*)
-                Thread.Sleep(1000)
+        task {
+            if jobs.Count = 0 then
+                ()
+            else
+                while true do
+                    let now = DateTimeOffset.Now
+                    for job in jobs do
+                        if Math.Round((job.CurrentDate - now).TotalSeconds) = 0 then
+                            printfn "[Starting execute]"
+                            do! job.Execute()
+                            printfn "[Executed]"
+                        else
+                            printfn $"[{DateTimeOffset.Now}] => {job.CurrentDate}"
+                    Thread.Sleep(1000)
+        }
 
     member this.Stop() = ()

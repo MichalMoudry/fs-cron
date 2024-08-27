@@ -11,7 +11,7 @@ scheduler.NewJob("* * * * *", () =>
 {
     Console.WriteLine($"[{DateTimeOffset.Now}] Echo 2");
 });*/
-scheduler.Start(false);
+await scheduler.Start(false);
 
 Console.WriteLine("Press any key to exit...");
 Console.ReadLine();
