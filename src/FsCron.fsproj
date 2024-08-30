@@ -14,12 +14,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="JobDefinition.fs" />
-    <Compile Include="Scheduler.fs" />
+    <PackageReference Include="Cronos" Version="0.8.4" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Cronos" Version="0.8.4" />
+    <Compile Include="JobDefinition.fs" />
+    <Compile Include="Scheduler.fs" />
   </ItemGroup>
 
 </Project>

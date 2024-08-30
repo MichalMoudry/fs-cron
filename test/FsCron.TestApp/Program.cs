@@ -3,17 +3,16 @@
 Console.WriteLine("Hello, World!");
 
 var scheduler = new Scheduler();
-scheduler.NewJob("* * * * *", () =>
-{
-    Console.WriteLine($"[{DateTimeOffset.Now}] Echo");
-});
-/*scheduler.NewJob("* * * * *", () =>
-{
-    Console.WriteLine($"[{DateTimeOffset.Now}] Echo 2");
-});*/
-await scheduler.Start(false);
+scheduler.NewJob("* * * * *", Print);
+//scheduler.NewAsyncJob("* * * * *", Wait());
+scheduler.Start();
 
 Console.WriteLine("Press any key to exit...");
 Console.ReadLine();
 
 scheduler.Stop();
+return;
+
+void Print() => Console.WriteLine($"[{DateTimeOffset.Now}] Echo");
+
+Task Wait() => Task.Delay(5000);
