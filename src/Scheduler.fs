@@ -17,6 +17,7 @@ type Scheduler() =
             for job in jobs do
                 if Math.Round((job.CurrentDate - now).TotalSeconds) = 0 then
                     if job.IsAsync then
+                        //ThreadPool.QueueUserWorkItem(job.ExecuteAsync)
                         printfn "[Async execute]"
                     else
                         printfn "[Action execute]"
@@ -35,7 +36,7 @@ type Scheduler() =
             Some(job)
         ))
 
-    member this.NewAsyncJob (cronDef: string) (job: Task) =
+    member this.NewAsyncJob (cronDef: string) (job: Func<Task>) =
         jobs.Add(JobDefinition(
             CronExpression.Parse(cronDef),
             Some(job),

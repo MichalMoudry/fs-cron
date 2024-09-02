@@ -13,7 +13,7 @@ type internal IJobDefinition =
 [<Sealed>]
 type internal JobDefinition(
     cronExp: CronExpression,
-    work: option<Task>,
+    work: option<Func<Task>>,
     action: option<Action>) =
     let mutable date =
         cronExp.GetNextOccurrence(DateTimeOffset.Now, TimeZoneInfo.Local).Value
@@ -22,9 +22,9 @@ type internal JobDefinition(
         member this.CurrentDate = date
 
         member this.ExecuteAsync() =
-            task {
-                return ()
-            }
+            match work with
+            | None -> Task.CompletedTask
+            | Some value -> value.Invoke()
 
         member this.Execute() =
             match action with

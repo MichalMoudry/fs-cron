@@ -10,6 +10,7 @@
 
     <ItemGroup>
         <Compile Include="CronHelperTests.fs" />
+        <Compile Include="JobDefinitionTests.fs" />
         <Compile Include="Program.fs"/>
     </ItemGroup>
 
