@@ -22,9 +22,11 @@ type internal JobDefinition(
         member this.CurrentDate = date
 
         member this.ExecuteAsync() =
-            match work with
-            | None -> Task.CompletedTask
-            | Some value -> value.Invoke()
+            task {
+                do! work.Value.Invoke()
+                let next = cronExp.GetNextOccurrence(date, TimeZoneInfo.Local)
+                date <- if next.HasValue then next.Value else date
+            }
 
         member this.Execute() =
             match action with

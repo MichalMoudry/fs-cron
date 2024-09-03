@@ -2,14 +2,20 @@ namespace FsCron
 
 open System
 open System.Collections.Generic
+open System.Runtime.InteropServices
 open System.Threading
 open System.Threading.Tasks
 open Cronos
 
 /// A job scheduler that runs in a separate background thread.
 [<Sealed>]
-type Scheduler() =
+type Scheduler([<Optional>] cancellationToken: Nullable<CancellationToken>) =
     let jobs = List<IJobDefinition>()
+    let tokenSource = new CancellationTokenSource()
+    let token =
+        match cancellationToken.HasValue with
+        | true -> cancellationToken.Value
+        | false -> tokenSource.Token
 
     let startInternal() =
         while true do
@@ -17,16 +23,16 @@ type Scheduler() =
             for job in jobs do
                 if Math.Round((job.CurrentDate - now).TotalSeconds) = 0 then
                     if job.IsAsync then
-                        //ThreadPool.QueueUserWorkItem(job.ExecuteAsync)
-                        printfn "[Async execute]"
+                        job.ExecuteAsync() |> Async.AwaitTask |> Async.Start
                     else
-                        printfn "[Action execute]"
                         job.Execute()
-                else
-                    printfn $"[{now}] => {job.CurrentDate}"
             Thread.Sleep(1000)
 
-    member this.Start() =
+    interface IDisposable with
+        member this.Dispose() =
+            tokenSource.Dispose()
+
+    member this.Start () =
         Thread(startInternal, IsBackground = true).Start()
 
     member this.NewJob (cronDef: string) (job: Action) =
@@ -43,4 +49,5 @@ type Scheduler() =
             None
         ))
 
-    member this.Stop() = ()
+    member this.Stop() =
+        ()

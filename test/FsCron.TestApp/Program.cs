@@ -2,7 +2,7 @@
 
 Console.WriteLine("Hello, World!");
 
-var scheduler = new Scheduler();
+using var scheduler = new Scheduler();
 //scheduler.NewJob("* * * * *", Print);
 scheduler.NewAsyncJob("* * * * *", Wait);
 scheduler.Start();
@@ -17,7 +17,7 @@ return;
 
 async Task Wait()
 {
-    Console.WriteLine("Start...");
+    Console.WriteLine($"[{DateTime.Now}] Start...");
     await Task.Delay(5000);
-    Console.WriteLine("Executed...");
+    Console.WriteLine($"[{DateTime.Now}] Executed...");
 }
