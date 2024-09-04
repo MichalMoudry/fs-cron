@@ -1,6 +1,7 @@
 namespace FsCron
 
 open System
+open System.Threading
 open System.Threading.Tasks
 open Cronos
 
@@ -23,6 +24,7 @@ type internal JobDefinition(
 
         member this.ExecuteAsync() =
             task {
+                //work.Value.Invoke(CancellationToken.None)
                 do! work.Value.Invoke()
                 let next = cronExp.GetNextOccurrence(date, TimeZoneInfo.Local)
                 date <- if next.HasValue then next.Value else date

@@ -11,11 +11,20 @@ open Cronos
 [<Sealed>]
 type Scheduler([<Optional>] cancellationToken: Nullable<CancellationToken>) =
     let jobs = List<IJobDefinition>()
-    let tokenSource = new CancellationTokenSource()
+
+    let tokenSource =
+        match cancellationToken.HasValue  with
+        | true -> None
+        | false -> Some(new CancellationTokenSource())
+
     let token =
         match cancellationToken.HasValue with
         | true -> cancellationToken.Value
-        | false -> tokenSource.Token
+        | false ->
+            if tokenSource.IsSome then
+                tokenSource.Value.Token
+            else
+                failwith "uninitialized token source"
 
     let startInternal() =
         while true do
@@ -29,8 +38,7 @@ type Scheduler([<Optional>] cancellationToken: Nullable<CancellationToken>) =
             Thread.Sleep(1000)
 
     interface IDisposable with
-        member this.Dispose() =
-            tokenSource.Dispose()
+        member this.Dispose() = tokenSource.Value.Dispose()
 
     member this.Start () =
         Thread(startInternal, IsBackground = true).Start()
@@ -49,5 +57,6 @@ type Scheduler([<Optional>] cancellationToken: Nullable<CancellationToken>) =
             None
         ))
 
+    /// Method for stopping the scheduler. Also, calls Dispose() method.
     member this.Stop() =
-        ()
+        (this :> IDisposable).Dispose()
