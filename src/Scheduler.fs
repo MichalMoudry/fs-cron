@@ -32,7 +32,9 @@ type Scheduler([<Optional>] cancellationToken: Nullable<CancellationToken>) =
             for job in jobs do
                 if Math.Round((job.CurrentDate - now).TotalSeconds) = 0 then
                     if job.IsAsync then
-                        job.ExecuteAsync() |> Async.AwaitTask |> Async.Start
+                        job.ExecuteAsync(token)
+                        |> Async.AwaitTask
+                        |> Async.Start
                     else
                         job.Execute()
             Thread.Sleep(1000)

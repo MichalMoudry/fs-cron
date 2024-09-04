@@ -7,7 +7,7 @@ open Cronos
 
 type internal IJobDefinition =
     abstract CurrentDate: DateTimeOffset
-    abstract ExecuteAsync: unit -> Task
+    abstract ExecuteAsync: CancellationToken -> Task
     abstract Execute: unit -> unit
     abstract IsAsync: bool
 
@@ -22,10 +22,9 @@ type internal JobDefinition(
     interface IJobDefinition with
         member this.CurrentDate = date
 
-        member this.ExecuteAsync() =
+        member this.ExecuteAsync(token) =
             task {
-                //work.Value.Invoke(CancellationToken.None)
-                do! work.Value.Invoke()
+                do! work.Value.Invoke().WaitAsync(token)
                 let next = cronExp.GetNextOccurrence(date, TimeZoneInfo.Local)
                 date <- if next.HasValue then next.Value else date
             }

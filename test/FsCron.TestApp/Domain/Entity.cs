@@ -1,6 +1,6 @@
 namespace FsCron.TestApp.Domain;
 
-internal abstract class Entity
+public abstract class Entity
 {
     public Guid Id { get; init; }
 

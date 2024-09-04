@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FsCron.TestApp.Database;
 
-internal class PetStoreContext : DbContext
+public class PetStoreContext : DbContext
 {
     private readonly string _dbPath;
 
