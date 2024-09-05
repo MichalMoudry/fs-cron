@@ -13,7 +13,7 @@ type Scheduler([<Optional>] cancellationToken: Nullable<CancellationToken>) =
     let jobs = List<IJobDefinition>()
 
     let tokenSource =
-        match cancellationToken.HasValue  with
+        match cancellationToken.HasValue with
         | true -> None
         | false -> Some(new CancellationTokenSource())
 
@@ -40,7 +40,9 @@ type Scheduler([<Optional>] cancellationToken: Nullable<CancellationToken>) =
             Thread.Sleep(1000)
 
     interface IDisposable with
-        member this.Dispose() = tokenSource.Value.Dispose()
+        member this.Dispose() =
+            if tokenSource.IsSome then
+                tokenSource.Value.Dispose()
 
     member this.Start () =
         Thread(startInternal, IsBackground = true).Start()
@@ -52,7 +54,7 @@ type Scheduler([<Optional>] cancellationToken: Nullable<CancellationToken>) =
             Some(job)
         ))
 
-    member this.NewAsyncJob (cronDef: string) (job: Func<Task>) =
+    member this.NewAsyncJob (cronDef: string) (job: Func<CancellationToken, Task>) =
         jobs.Add(JobDefinition(
             CronExpression.Parse(cronDef),
             Some(job),
@@ -61,4 +63,5 @@ type Scheduler([<Optional>] cancellationToken: Nullable<CancellationToken>) =
 
     /// Method for stopping the scheduler. Also, calls Dispose() method.
     member this.Stop() =
+        tokenSource.Value.Cancel()
         (this :> IDisposable).Dispose()

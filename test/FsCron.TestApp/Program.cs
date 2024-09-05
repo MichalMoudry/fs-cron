@@ -14,7 +14,8 @@ var mediator = provider.GetRequiredService<IMediator>();
 
 using var scheduler = new Scheduler();
 //scheduler.NewJob("* * * * *", Print);
-scheduler.NewAsyncJob("* * * * *", Wait);
+scheduler.NewAsyncJob("* * * * *", InsertTask);
+scheduler.NewAsyncJob("*/2 * * * *", SelectTask);
 scheduler.Start();
 
 Console.WriteLine("Press any key to exit...");
@@ -25,10 +26,22 @@ return;
 
 //void Print() => Console.WriteLine($"[{DateTimeOffset.Now}] Echo");
 
-async Task Wait()
+async Task InsertTask(CancellationToken token)
 {
     Console.WriteLine($"[{DateTime.Now}] Start...");
-    await mediator.Send(new PetInsertCommand("Cari"));
-    await Task.Delay(2500);
+    await mediator.Send(new PetInsertCommand("Cari"), token);
     Console.WriteLine($"[{DateTime.Now}] Executed...");
+}
+
+async Task SelectTask(CancellationToken token)
+{
+    Console.WriteLine($"[{DateTime.Now}] Pets:");
+    var pets = await mediator.Send(
+        new PetSelectCommand(),
+        token
+    );
+    foreach (var pet in pets)
+    {
+        Console.WriteLine(pet);
+    }
 }

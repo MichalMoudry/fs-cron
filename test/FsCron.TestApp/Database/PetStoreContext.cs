@@ -12,6 +12,7 @@ public class PetStoreContext : DbContext
         var path = Environment.GetFolderPath(
             Environment.SpecialFolder.LocalApplicationData
         );
+        path = "/Users/michalmoudry/";
         _dbPath = Path.Join(path, "petstore.db");
     }
 

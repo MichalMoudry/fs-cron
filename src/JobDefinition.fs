@@ -14,7 +14,7 @@ type internal IJobDefinition =
 [<Sealed>]
 type internal JobDefinition(
     cronExp: CronExpression,
-    work: option<Func<Task>>,
+    work: option<Func<CancellationToken, Task>>,
     action: option<Action>) =
     let mutable date =
         cronExp.GetNextOccurrence(DateTimeOffset.Now, TimeZoneInfo.Local).Value
@@ -24,7 +24,7 @@ type internal JobDefinition(
 
         member this.ExecuteAsync(token) =
             task {
-                do! work.Value.Invoke().WaitAsync(token)
+                do! work.Value.Invoke(token)
                 let next = cronExp.GetNextOccurrence(date, TimeZoneInfo.Local)
                 date <- if next.HasValue then next.Value else date
             }
