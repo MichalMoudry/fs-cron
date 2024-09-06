@@ -27,8 +27,10 @@ type Scheduler([<Optional>] cancellationToken: Nullable<CancellationToken>) =
                 failwith "uninitialized token source"
 
     let startInternal() =
+        let mutable previousRun = TimeSpan.Zero
+        let mutable now = DateTimeOffset.MinValue
         while true do
-            let now = DateTimeOffset.Now
+            now <- DateTimeOffset.Now
             for job in jobs do
                 if Math.Round((job.CurrentDate - now).TotalSeconds) = 0 then
                     if job.IsAsync then
@@ -37,6 +39,8 @@ type Scheduler([<Optional>] cancellationToken: Nullable<CancellationToken>) =
                         |> Async.Start
                     else
                         job.Execute()
+            previousRun <- now - DateTimeOffset.Now
+            printfn $"Iteration took {previousRun}"
             Thread.Sleep(1000)
 
     interface IDisposable with

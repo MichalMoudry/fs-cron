@@ -13,9 +13,9 @@ Console.WriteLine("Hello, World!");
 var mediator = provider.GetRequiredService<IMediator>();
 
 using var scheduler = new Scheduler();
-//scheduler.NewJob("* * * * *", Print);
-scheduler.NewAsyncJob("* * * * *", InsertTask);
-scheduler.NewAsyncJob("*/2 * * * *", SelectTask);
+scheduler.NewJob("* * * * *", Print);
+//scheduler.NewAsyncJob("* * * * *", InsertTask);
+//scheduler.NewAsyncJob("*/2 * * * *", SelectTask);
 scheduler.Start();
 
 Console.WriteLine("Press any key to exit...");
@@ -24,7 +24,7 @@ Console.ReadLine();
 scheduler.Stop();
 return;
 
-//void Print() => Console.WriteLine($"[{DateTimeOffset.Now}] Echo");
+void Print() => Console.WriteLine($"[{DateTimeOffset.Now}] Echo");
 
 async Task InsertTask(CancellationToken token)
 {
