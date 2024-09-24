@@ -39,8 +39,8 @@ type Scheduler([<Optional>] cancellationToken: Nullable<CancellationToken>) =
                         |> Async.Start
                     else
                         job.Execute()
-            previousRun <- now - DateTimeOffset.Now
-            printfn $"Iteration took {previousRun}"
+            previousRun <- DateTimeOffset.Now - now
+            printfn $"[{now}] Iteration took {previousRun}"
             Thread.Sleep(1000)
 
     interface IDisposable with

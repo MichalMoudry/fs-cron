@@ -13,9 +13,11 @@ Console.WriteLine("Hello, World!");
 var mediator = provider.GetRequiredService<IMediator>();
 
 using var scheduler = new Scheduler();
-scheduler.NewJob("* * * * *", Print);
+//scheduler.NewJob("* * * * *", Print);
 //scheduler.NewAsyncJob("* * * * *", InsertTask);
 //scheduler.NewAsyncJob("*/2 * * * *", SelectTask);
+scheduler.NewJob("* * * * *", Print);
+scheduler.NewAsyncJob("* * * * *", PrintAsync);
 scheduler.Start();
 
 Console.WriteLine("Press any key to exit...");
@@ -25,6 +27,13 @@ scheduler.Stop();
 return;
 
 void Print() => Console.WriteLine($"[{DateTimeOffset.Now}] Echo");
+
+async Task PrintAsync(CancellationToken token)
+{
+    Console.WriteLine("Print");
+    await Task.Delay(2500, token);
+    Console.WriteLine("Print");
+}
 
 async Task InsertTask(CancellationToken token)
 {
