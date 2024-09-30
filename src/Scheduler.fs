@@ -39,7 +39,6 @@ type Scheduler([<Optional>] cancellationToken: Nullable<CancellationToken>) =
                         |> Async.Start
                     else
                         job.Execute()
-            printfn $"[{now}] Executed iteration"
             Thread.Sleep(maxIterationDuration - (DateTimeOffset.Now - now))
 
     interface IDisposable with
