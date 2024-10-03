@@ -27,19 +27,21 @@ type Scheduler([<Optional>] cancellationToken: Nullable<CancellationToken>) =
                 failwith "uninitialized token source"
 
     let startInternal() =
-        let mutable now = DateTimeOffset.MinValue
+        let mutable startTimeStamp = DateTimeOffset.MinValue
         let maxIterationDuration = TimeSpan.FromSeconds(1)
         while true do
-            now <- DateTimeOffset.Now
+            startTimeStamp <- DateTimeOffset.Now
             for job in jobs do
-                if Math.Round((job.CurrentDate - now).TotalSeconds) = 0 then
+                if Math.Round((job.CurrentDate - startTimeStamp).TotalSeconds) = 0 then
                     if job.IsAsync then
                         job.ExecuteAsync(token)
                         |> Async.AwaitTask
                         |> Async.Start
                     else
-                        job.Execute()
-            Thread.Sleep(maxIterationDuration - (DateTimeOffset.Now - now))
+                        Task.Run(job.Execute, token)
+                        |> Async.AwaitTask
+                        |> Async.Start
+            Thread.Sleep(maxIterationDuration - (DateTimeOffset.Now - startTimeStamp))
 
     interface IDisposable with
         member this.Dispose() =

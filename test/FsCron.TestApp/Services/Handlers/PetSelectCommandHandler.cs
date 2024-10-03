@@ -12,7 +12,7 @@ public sealed class PetSelectCommandHandler(PetStoreContext dbContext)
         PetSelectCommand request,
         CancellationToken cancellationToken)
     {
-        var pets = await dbContext
+        return await dbContext
             .Pets
             .Select(i => new PetInfo(
                 i.Id,
@@ -20,7 +20,7 @@ public sealed class PetSelectCommandHandler(PetStoreContext dbContext)
                 i.Added,
                 i.ConcurrencyStamp
             ))
+            .Take(request.Limit)
             .ToListAsync(cancellationToken);
-        return pets;
     }
 }
