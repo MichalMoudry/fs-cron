@@ -6,24 +6,24 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FsCron.TestApp.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigration : Migration
+    public partial class InitMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Pets",
+                name: "JobResults",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 128, nullable: false),
-                    Added = table.Column<DateTimeOffset>(type: "TEXT", nullable: false),
-                    Updated = table.Column<DateTimeOffset>(type: "TEXT", nullable: false),
-                    ConcurrencyStamp = table.Column<Guid>(type: "TEXT", nullable: false)
+                    Type = table.Column<int>(type: "INTEGER", nullable: false),
+                    StartTime = table.Column<DateTimeOffset>(type: "TEXT", nullable: false),
+                    FinishTime = table.Column<DateTimeOffset>(type: "TEXT", nullable: false),
+                    Added = table.Column<DateTimeOffset>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Pets", x => x.Id);
+                    table.PrimaryKey("PK_JobResults", x => x.Id);
                 });
         }
 
@@ -31,7 +31,7 @@ namespace FsCron.TestApp.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Pets");
+                name: "JobResults");
         }
     }
 }

@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FsCron.TestApp.Database;
 
-public sealed class PetStoreContext : DbContext
+public sealed class TestDbContext : DbContext
 {
-    private const string DbPath = "petstore.db";
+    private const string DbPath = "test_db.db";
 
-    public DbSet<Pet> Pets { get; set; }
+    public DbSet<JobResult> JobResults { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlite($"Data Source={DbPath}");

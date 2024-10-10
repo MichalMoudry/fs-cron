@@ -1,20 +1,24 @@
 ﻿using FsCron;
 using FsCron.TestApp.Database;
+using FsCron.TestApp.Domain;
 using FsCron.TestApp.Services;
 using Mediator;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 var services = new ServiceCollection();
-services.AddMediator();
-services.AddDbContext<PetStoreContext>();
+services
+    .AddMediator()
+    .AddDbContext<TestDbContext>()
+    .AddLogging(builder => builder.AddConsole());
 var provider = services.BuildServiceProvider();
 
 Console.WriteLine("Hello, World!");
 var mediator = provider.GetRequiredService<IMediator>();
 
 using var scheduler = new Scheduler();
-scheduler.NewJob("* * * * *", Print);
-//scheduler.NewAsyncJob("* * * * *", InsertTask);
+//scheduler.NewJob("* * * * *", Print);
+scheduler.NewAsyncJob("* * * * *", PrintAsync);
 //scheduler.NewAsyncJob("*/2 * * * *", SelectTask);
 scheduler.Start();
 
@@ -24,36 +28,21 @@ Console.ReadLine();
 scheduler.Stop();
 return;
 
-void Print()
+/*void Print()
 {
     Console.WriteLine($"[{DateTimeOffset.Now}] Echo 1");
     Thread.Sleep(2000);
     Console.WriteLine($"[{DateTimeOffset.Now}] Echo 2");
-}
+}*/
 
 async Task PrintAsync(CancellationToken token)
 {
-    Console.WriteLine("Print 1");
+    var start = DateTimeOffset.Now;
     await Task.Delay(2000, token);
-    Console.WriteLine("Print 2");
-}
+    var end = DateTimeOffset.Now;
 
-async Task InsertTask(CancellationToken token)
-{
-    Console.WriteLine($"[{DateTime.Now}] Start...");
-    await mediator.Send(new PetInsertCommand("Cari"), token);
-    Console.WriteLine($"[{DateTime.Now}] Executed...");
-}
-
-async Task SelectTask(CancellationToken token)
-{
-    Console.WriteLine($"[{DateTime.Now}] Pets:");
-    var pets = await mediator.Send(
-        new PetSelectCommand(),
+    await mediator.Send(
+        new InsertJobResultCommand(JobType.PrintJob, start, end),
         token
     );
-    foreach (var pet in pets)
-    {
-        Console.WriteLine(pet);
-    }
 }

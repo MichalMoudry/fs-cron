@@ -10,9 +10,9 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FsCron.TestApp.Migrations
 {
-    [DbContext(typeof(PetStoreContext))]
-    [Migration("20240905144832_InitialMigration")]
-    partial class InitialMigration
+    [DbContext(typeof(TestDbContext))]
+    [Migration("20241009152950_InitMigration")]
+    partial class InitMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,7 +20,7 @@ namespace FsCron.TestApp.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.8");
 
-            modelBuilder.Entity("FsCron.TestApp.Domain.Pet", b =>
+            modelBuilder.Entity("FsCron.TestApp.Domain.JobResult", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -29,20 +29,18 @@ namespace FsCron.TestApp.Migrations
                     b.Property<DateTimeOffset>("Added")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("ConcurrencyStamp")
+                    b.Property<DateTimeOffset>("FinishTime")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(128)
+                    b.Property<DateTimeOffset>("StartTime")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTimeOffset>("Updated")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("Type")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Pets");
+                    b.ToTable("JobResults");
                 });
 #pragma warning restore 612, 618
         }
