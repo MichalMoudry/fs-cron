@@ -28,7 +28,7 @@ type Scheduler([<Optional>] cancellationToken: Nullable<CancellationToken>) =
 
     let startInternal() =
         let mutable startTimeStamp = DateTimeOffset.MinValue
-        let maxIterationDuration = TimeSpan.FromSeconds(1)
+        let maxIterationDuration = TimeSpan.FromSeconds(int64(1))
         while true do
             startTimeStamp <- DateTimeOffset.Now
             for job in jobs do
