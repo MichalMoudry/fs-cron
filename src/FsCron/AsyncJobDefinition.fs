@@ -10,6 +10,5 @@ type AsyncJobDefinition(cronExp, tzInfo, job: Func<CancellationToken, Task>) =
     member this.ExecuteAsync(token: CancellationToken) =
         task {
             do! job.Invoke(token)
-            //let next = this.NextOccurrence
-            // TODO: Add date handling
+            this.UpdateNextOccurrence()
         }

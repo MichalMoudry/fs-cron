@@ -16,6 +16,7 @@
 
     <ItemGroup>
         <Compile Include="JobDefinition.fs" />
+        <Compile Include="SyncJobDefinition.fs" />
         <Compile Include="AsyncJobDefinition.fs" />
         <Compile Include="Scheduler.fs" />
     </ItemGroup>
