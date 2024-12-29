@@ -11,11 +11,12 @@ scheduler.NewAsyncJob(
     TimeZoneInfo.Local
 );
 
+Console.WriteLine("Starting scheduler");
 scheduler.Start();
 return;
 
 async Task PrintAsync(CancellationToken token)
 {
-    await Task.Delay(1000, token);
     Console.WriteLine($"[{DateTimeOffset.Now}] Test print");
+    await Task.Delay(1000, token);
 }

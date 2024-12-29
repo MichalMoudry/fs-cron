@@ -19,6 +19,7 @@
         <Compile Include="SyncJobDefinition.fs" />
         <Compile Include="AsyncJobDefinition.fs" />
         <Compile Include="Scheduler.fs" />
+        <Compile Include="MonitoredAsyncJobDefinition.fs" />
     </ItemGroup>
 
 </Project>

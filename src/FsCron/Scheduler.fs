@@ -9,16 +9,34 @@ open Cronos
 [<Sealed>]
 type Scheduler(cancellationToken: CancellationToken) =
     let jobs = List<JobDefinition>()
+    let maxIterationDuration = TimeSpan.FromSeconds(int64(1))
 
     let startInternal() =
         let mutable startTimeStamp = DateTimeOffset.MinValue
-        let maxIterationDuration = TimeSpan.FromSeconds(int64(1))
 
         while not(cancellationToken.IsCancellationRequested) do
             startTimeStamp <- DateTimeOffset.Now
+
             for job in jobs do
-                //(job.NextOccurrence - startTimeStamp).TotalSeconds
+                if Math.Round(job.NextOccurrenceDiff.TotalSeconds) = 0 then
+                    printfn $"[{DateTimeOffset.Now}] Running a job"
+                    match job with
+                    | :? AsyncJobDefinition as jobDef ->
+                        jobDef.ExecuteAsync(cancellationToken)
+                        |> Async.AwaitTask
+                        |> Async.Start
+                    | :? SyncJobDefinition as jobDef ->
+                        if ThreadPool.QueueUserWorkItem(fun i -> jobDef.Execute()) then
+                            ()
+                        else
+                            failwith "Sync job was not queued on thread pool"
+                    | _ -> failwith "Unknown job type"
+
             Thread.Sleep(maxIterationDuration - (DateTimeOffset.Now - startTimeStamp))
+
+    /// Adds a new synchronous job to the scheduler.
+    member this.NewJob cronExpr tzInfo job =
+        jobs.Add(SyncJobDefinition(CronExpression.Parse(cronExpr), tzInfo, job))
 
     /// Adds a new asynchronous job to the scheduler.
     member this.NewAsyncJob cronExpr job tzInfo =
