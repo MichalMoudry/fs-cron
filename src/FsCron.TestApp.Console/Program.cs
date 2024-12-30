@@ -1,18 +1,42 @@
 ﻿using FsCron;
+using FsCron.Monitor;
+using FsCron.TestApp.Console;
+using Microsoft.Extensions.Logging;
 
 Console.WriteLine("Hello, World!");
 
 using var source = new CancellationTokenSource();
-var scheduler = new Scheduler(source.Token);
 
-scheduler.NewAsyncJob(
-    "* * * * *",
-    PrintAsync,
-    TimeZoneInfo.Local
+using var loggerFactory = LoggerFactory.Create(
+    builder => builder.AddConsole()
 );
+var logger = loggerFactory.CreateLogger<Program>();
 
-Console.WriteLine("Starting scheduler");
-scheduler.Start();
+try
+{
+    var scheduler = new Scheduler(source.Token);
+
+    scheduler.AddMonitoring(
+        new StorageSettings(
+            StorageType.RemoteCache,
+            "127.0.0.1:6379,password=AxKZn7WuI.2dB6dp5|1z,abortConnect=false"
+        )
+    );
+
+    scheduler.NewAsyncJob(
+        "* * * * *",
+        PrintAsync,
+        TimeZoneInfo.Local
+    );
+
+    Console.WriteLine("Starting scheduler");
+    scheduler.Start();
+}
+catch (Exception e)
+{
+    Log.LogSchedulerErr(logger, e);
+}
+
 return;
 
 async Task PrintAsync(CancellationToken token)

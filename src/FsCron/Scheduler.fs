@@ -4,6 +4,7 @@ open System
 open System.Collections.Generic
 open System.Threading
 open Cronos
+open FsCron.Monitor
 
 /// A job scheduler that runs in either synchronous or asynchronous mode.
 [<Sealed>]
@@ -18,8 +19,8 @@ type Scheduler(cancellationToken: CancellationToken) =
             startTimeStamp <- DateTimeOffset.Now
 
             for job in jobs do
+                // TODO: Investigate retry with <= 0 condition
                 if Math.Round(job.NextOccurrenceDiff.TotalSeconds) = 0 then
-                    printfn $"[{DateTimeOffset.Now}] Running a job"
                     match job with
                     | :? AsyncJobDefinition as jobDef ->
                         jobDef.ExecuteAsync(cancellationToken)
@@ -41,6 +42,12 @@ type Scheduler(cancellationToken: CancellationToken) =
     /// Adds a new asynchronous job to the scheduler.
     member this.NewAsyncJob cronExpr job tzInfo =
         jobs.Add(AsyncJobDefinition(CronExpression.Parse(cronExpr), tzInfo, job))
+
+    /// Method for adding/enabling of monitoring of jobs.
+    member this.AddMonitoring(settings: StorageSettings) =
+        match settings.Type with
+        | StorageType.RemoteCache -> RemoteCache.Connect(settings.ConnectionString)
+        | _ -> failwith "Incorrect storage settings"
 
     /// Starts scheduler and blocks the current thread.
     member this.Start() = startInternal()
