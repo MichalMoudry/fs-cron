@@ -4,11 +4,13 @@ open System
 open System.Collections.Generic
 open System.Threading
 open Cronos
-open FsCron.Monitor
+open FsCron.Monitoring
 
 /// A job scheduler that runs in either synchronous or asynchronous mode.
 [<Sealed>]
 type Scheduler(cancellationToken: CancellationToken) =
+    let mutable isRunning = false
+    let mutable areJobsMonitored = false
     let jobs = List<JobDefinition>()
     let maxIterationDuration = TimeSpan.FromSeconds(int64(1))
 
@@ -20,7 +22,8 @@ type Scheduler(cancellationToken: CancellationToken) =
 
             for job in jobs do
                 // TODO: Investigate retry with <= 0 condition
-                if Math.Round(job.NextOccurrenceDiff.TotalSeconds) = 0 then
+                let diff = Math.Round(job.NextOccurrenceDiff.TotalSeconds) 
+                if diff = 0 then
                     match job with
                     | :? AsyncJobDefinition as jobDef ->
                         jobDef.ExecuteAsync(cancellationToken)
@@ -37,21 +40,42 @@ type Scheduler(cancellationToken: CancellationToken) =
 
     /// Adds a new synchronous job to the scheduler.
     member this.NewJob cronExpr tzInfo job =
-        jobs.Add(SyncJobDefinition(CronExpression.Parse(cronExpr), tzInfo, job))
+        match areJobsMonitored with
+        | true -> failwith "Not implemented"
+        | false -> jobs.Add(
+            SyncJobDefinition(CronExpression.Parse(cronExpr), tzInfo, job)
+        )
 
     /// Adds a new asynchronous job to the scheduler.
     member this.NewAsyncJob cronExpr job tzInfo =
-        jobs.Add(AsyncJobDefinition(CronExpression.Parse(cronExpr), tzInfo, job))
+        match areJobsMonitored with
+        | true -> jobs.Add(MonitoredAsyncJobDefinition(
+                CronExpression.Parse(cronExpr),
+                tzInfo,
+                job
+            ))
+        | false -> jobs.Add(AsyncJobDefinition(
+                CronExpression.Parse(cronExpr),
+                tzInfo,
+                job
+            ))
 
-    /// Method for adding/enabling of monitoring of jobs.
-    member this.AddMonitoring(settings: StorageSettings) =
-        match settings.Type with
-        | StorageType.RemoteCache -> RemoteCache.Connect(settings.ConnectionString)
-        | _ -> failwith "Incorrect storage settings"
+    /// Method for adding and enabling monitoring of jobs.
+    member this.AddMonitoring(settings: StorageSettings): unit =
+        Monitoring.Monitor.Initialize settings
+        areJobsMonitored <- true
 
     /// Starts scheduler and blocks the current thread.
-    member this.Start() = startInternal()
+    member this.Start() =
+        if not(isRunning) then
+            startInternal()
+            isRunning <- true
+        else ()
 
     /// Starts scheduler in an asynchronous manner in a
     /// separate background <seealso cref="Thread"/>.
-    member this.StartAsync() = Thread(startInternal, IsBackground = true).Start()
+    member this.StartAsync() =
+        if not(isRunning) then
+            Thread(startInternal, IsBackground = true).Start()
+            isRunning <- true
+        else ()

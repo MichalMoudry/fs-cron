@@ -5,7 +5,7 @@ open Cronos
 
 /// A base class for both sync and async job definitions.
 [<AbstractClass>]
-type JobDefinition(cronExpr: CronExpression, tzInfo: TimeZoneInfo) =
+type internal JobDefinition(cronExpr: CronExpression, tzInfo: TimeZoneInfo) =
     let mutable currentDate =
         cronExpr.GetNextOccurrence(DateTimeOffset.Now, tzInfo)
     member this.CronExpression with get() = cronExpr

@@ -1,5 +1,5 @@
 ﻿using FsCron;
-using FsCron.Monitor;
+using FsCron.Monitoring;
 using FsCron.TestApp.Console;
 using Microsoft.Extensions.Logging;
 

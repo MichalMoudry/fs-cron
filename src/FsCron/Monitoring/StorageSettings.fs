@@ -1,4 +1,4 @@
-namespace FsCron.Monitor
+namespace FsCron.Monitoring
 
 type StorageSettings = {
     Type : StorageType
