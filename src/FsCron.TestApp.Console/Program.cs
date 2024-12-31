@@ -18,7 +18,7 @@ try
 
     scheduler.AddMonitoring(
         new StorageSettings(
-            StorageType.RemoteCache,
+            OutputType.Console,
             "127.0.0.1:6379,password=AxKZn7WuI.2dB6dp5|1z,abortConnect=false"
         )
     );

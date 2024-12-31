@@ -16,9 +16,11 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Include="Monitoring\IStorageService.fs" />
+        <Compile Include="Monitoring\Storage\IStorageService.fs" />
+        <Compile Include="Monitoring\Storage\RemoteCache.fs" />
+        <Compile Include="Monitoring\Storage\ConsoleOutput.fs" />
         <Compile Include="Monitoring\JobStats.fs" />
-        <Compile Include="Monitoring\StorageType.fs" />
+        <Compile Include="Monitoring\OutputType.fs" />
         <Compile Include="Monitoring\StorageSettings.fs" />
         <Compile Include="Monitoring\Monitor.fs" />
         <Compile Include="JobDefinition.fs" />

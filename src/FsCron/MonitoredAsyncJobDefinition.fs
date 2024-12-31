@@ -17,7 +17,7 @@ type internal MonitoredAsyncJobDefinition(
             this.UpdateNextOccurrence()
             Monitoring.Monitor.StoreJobStatistics
                 {
-                    JobName = job.ToString()
+                    JobName = $"{job.ToString()}_{start}"
                     StartDate = start
                     EndDate = DateTimeOffset.Now
                 }

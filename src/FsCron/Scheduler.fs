@@ -29,6 +29,10 @@ type Scheduler(cancellationToken: CancellationToken) =
                         jobDef.ExecuteAsync(cancellationToken)
                         |> Async.AwaitTask
                         |> Async.Start
+                    | :? MonitoredAsyncJobDefinition as jobDef ->
+                        jobDef.ExecuteAsync(cancellationToken)
+                        |> Async.AwaitTask
+                        |> Async.Start
                     | :? SyncJobDefinition as jobDef ->
                         if ThreadPool.QueueUserWorkItem(fun i -> jobDef.Execute()) then
                             ()

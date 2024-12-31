@@ -1,6 +1,6 @@
 namespace FsCron.Monitoring
 
 type StorageSettings = {
-    Type : StorageType
+    Type : OutputType
     ConnectionString: string
 }
