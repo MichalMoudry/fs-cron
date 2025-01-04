@@ -68,12 +68,14 @@ type Scheduler(tzInfo: TimeZoneInfo) =
     member this.NewAsyncJob cronExpr job =
         jobs.Add(AsyncJobDefinition(CronExpression.Parse(cronExpr), tzInfo, job))
 
+    member this.NewDatabaseJob cronExpr job =
+        jobs.Add(DbJobDefinition(cronExpr, tzInfo, job))
+
     /// Starts scheduler and blocks the current thread.
     member this.Start() =
         if not(isRunning) then
             startInternal()
             isRunning <- true
-        else ()
 
     /// Starts scheduler in an asynchronous/non-blocking manner in a
     /// separate background <seealso cref="Thread"/>.
@@ -81,4 +83,3 @@ type Scheduler(tzInfo: TimeZoneInfo) =
         if not(isRunning) then
             Thread(startInternal, IsBackground = true).Start()
             isRunning <- true
-        else ()
