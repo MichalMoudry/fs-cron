@@ -1,11 +1,8 @@
 ﻿using FsCron;
-using FsCron.Monitoring;
 using FsCron.TestApp.Console;
 using Microsoft.Extensions.Logging;
 
 Console.WriteLine("Hello, World!");
-
-using var source = new CancellationTokenSource();
 
 using var loggerFactory = LoggerFactory.Create(
     builder => builder.AddConsole()
@@ -14,19 +11,11 @@ var logger = loggerFactory.CreateLogger<Program>();
 
 try
 {
-    var scheduler = new Scheduler(source.Token);
-
-    scheduler.AddMonitoring(
-        new StorageSettings(
-            OutputType.Console,
-            "127.0.0.1:6379,password=AxKZn7WuI.2dB6dp5|1z,abortConnect=false"
-        )
-    );
+    await using var scheduler = new Scheduler(TimeZoneInfo.Local);
 
     scheduler.NewAsyncJob(
         "* * * * *",
-        PrintAsync,
-        TimeZoneInfo.Local
+        PrintAsync
     );
 
     Console.WriteLine("Starting scheduler");

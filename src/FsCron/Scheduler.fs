@@ -3,19 +3,21 @@ namespace FsCron
 open System
 open System.Collections.Generic
 open System.Threading
+open System.Threading.Tasks
 open Cronos
-open FsCron.Monitoring
 
 /// A job scheduler that runs in either synchronous or asynchronous mode.
 [<Sealed>]
-type Scheduler(cancellationToken: CancellationToken) =
+type Scheduler(tzInfo: TimeZoneInfo) =
+    let mutable isDisposed = false
     let mutable isRunning = false
-    let mutable areJobsMonitored = false
     let jobs = List<JobDefinition>()
     let maxIterationDuration = TimeSpan.FromSeconds(int64(1))
+    let tokenSource = new CancellationTokenSource()
 
     let startInternal() =
         let mutable startTimeStamp = DateTimeOffset.MinValue
+        let cancellationToken = tokenSource.Token
 
         while not(cancellationToken.IsCancellationRequested) do
             startTimeStamp <- DateTimeOffset.Now
@@ -29,10 +31,6 @@ type Scheduler(cancellationToken: CancellationToken) =
                         jobDef.ExecuteAsync(cancellationToken)
                         |> Async.AwaitTask
                         |> Async.Start
-                    | :? MonitoredAsyncJobDefinition as jobDef ->
-                        jobDef.ExecuteAsync(cancellationToken)
-                        |> Async.AwaitTask
-                        |> Async.Start
                     | :? SyncJobDefinition as jobDef ->
                         if ThreadPool.QueueUserWorkItem(fun i -> jobDef.Execute()) then
                             ()
@@ -42,32 +40,33 @@ type Scheduler(cancellationToken: CancellationToken) =
 
             Thread.Sleep(maxIterationDuration - (DateTimeOffset.Now - startTimeStamp))
 
+    let Dispose disposing =
+        if not(isDisposed) then
+            if disposing then
+                tokenSource.Dispose()
+            isDisposed <- true
+
+    interface IDisposable with
+        member this.Dispose() =
+            tokenSource.Cancel()
+            Dispose(true)
+            GC.SuppressFinalize(this)
+
+    interface IAsyncDisposable with
+        member this.DisposeAsync() =
+            task {
+                do! tokenSource.CancelAsync()
+                Dispose(true)
+                GC.SuppressFinalize(this)
+            } |> ValueTask
+
     /// Adds a new synchronous job to the scheduler.
-    member this.NewJob cronExpr tzInfo job =
-        match areJobsMonitored with
-        | true -> failwith "Not implemented"
-        | false -> jobs.Add(
-            SyncJobDefinition(CronExpression.Parse(cronExpr), tzInfo, job)
-        )
+    member this.NewJob cronExpr job =
+        jobs.Add(SyncJobDefinition(CronExpression.Parse(cronExpr), tzInfo, job))
 
     /// Adds a new asynchronous job to the scheduler.
-    member this.NewAsyncJob cronExpr job tzInfo =
-        match areJobsMonitored with
-        | true -> jobs.Add(MonitoredAsyncJobDefinition(
-                CronExpression.Parse(cronExpr),
-                tzInfo,
-                job
-            ))
-        | false -> jobs.Add(AsyncJobDefinition(
-                CronExpression.Parse(cronExpr),
-                tzInfo,
-                job
-            ))
-
-    /// Method for adding and enabling monitoring of jobs.
-    member this.AddMonitoring(settings: StorageSettings): unit =
-        Monitoring.Monitor.Initialize settings
-        areJobsMonitored <- true
+    member this.NewAsyncJob cronExpr job =
+        jobs.Add(AsyncJobDefinition(CronExpression.Parse(cronExpr), tzInfo, job))
 
     /// Starts scheduler and blocks the current thread.
     member this.Start() =

@@ -12,21 +12,12 @@
 
     <ItemGroup>
         <PackageReference Include="Cronos" Version="0.9.0" />
-        <PackageReference Include="StackExchange.Redis" Version="2.8.24" />
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Include="Monitoring\Storage\IStorageService.fs" />
-        <Compile Include="Monitoring\Storage\RemoteCache.fs" />
-        <Compile Include="Monitoring\Storage\ConsoleOutput.fs" />
-        <Compile Include="Monitoring\JobStats.fs" />
-        <Compile Include="Monitoring\OutputType.fs" />
-        <Compile Include="Monitoring\StorageSettings.fs" />
-        <Compile Include="Monitoring\Monitor.fs" />
         <Compile Include="JobDefinition.fs" />
         <Compile Include="SyncJobDefinition.fs" />
         <Compile Include="AsyncJobDefinition.fs" />
-        <Compile Include="MonitoredAsyncJobDefinition.fs" />
         <Compile Include="Scheduler.fs" />
     </ItemGroup>
 
