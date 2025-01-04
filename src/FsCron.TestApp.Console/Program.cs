@@ -15,7 +15,11 @@ try
 
     scheduler.NewAsyncJob(
         "* * * * *",
-        PrintAsync
+        async token =>
+        {
+            Console.WriteLine($"[{DateTimeOffset.Now}] Test print");
+            await Task.Delay(1000, token);
+        }
     );
 
     Console.WriteLine("Starting scheduler");
@@ -24,12 +28,4 @@ try
 catch (Exception e)
 {
     Log.LogSchedulerErr(logger, e);
-}
-
-return;
-
-async Task PrintAsync(CancellationToken token)
-{
-    Console.WriteLine($"[{DateTimeOffset.Now}] Test print");
-    await Task.Delay(1000, token);
 }

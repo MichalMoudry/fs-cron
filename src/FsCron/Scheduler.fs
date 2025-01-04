@@ -75,7 +75,7 @@ type Scheduler(tzInfo: TimeZoneInfo) =
             isRunning <- true
         else ()
 
-    /// Starts scheduler in an asynchronous manner in a
+    /// Starts scheduler in an asynchronous/non-blocking manner in a
     /// separate background <seealso cref="Thread"/>.
     member this.StartAsync() =
         if not(isRunning) then
