@@ -12,13 +12,13 @@ var logger = loggerFactory.CreateLogger<Program>();
 try
 {
     await using var scheduler = new Scheduler(TimeZoneInfo.Local);
-
     scheduler.NewAsyncJob(
         "* * * * *",
         async token =>
         {
             Console.WriteLine($"[{DateTimeOffset.Now}] Test print");
-            await Task.Delay(1000, token);
+            await Task.Delay(500, token);
+            throw new InvalidOperationException("test exception");
         }
     );
 

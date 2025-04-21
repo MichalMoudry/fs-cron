@@ -9,11 +9,11 @@ open Cronos
 /// A job scheduler that runs in either synchronous or asynchronous mode.
 [<Sealed>]
 type Scheduler(tzInfo: TimeZoneInfo) =
+    let jobs = List<JobDefinition>()
+    let tokenSource = new CancellationTokenSource()
     let mutable isDisposed = false
     let mutable isRunning = false
-    let jobs = List<JobDefinition>()
     let maxIterationDuration = TimeSpan.FromSeconds(int64(1))
-    let tokenSource = new CancellationTokenSource()
 
     let startInternal() =
         let mutable startTimeStamp = DateTimeOffset.MinValue
@@ -25,20 +25,24 @@ type Scheduler(tzInfo: TimeZoneInfo) =
             for job in jobs do
                 // TODO: Investigate retry with <= 0 condition
                 let diff = Math.Round(job.NextOccurrenceDiff.TotalSeconds) 
-                if diff = 0 then
+                if diff <= 0 then
                     match job with
                     | :? AsyncJobDefinition as jobDef ->
                         jobDef.ExecuteAsync(cancellationToken)
                         |> Async.AwaitTask
                         |> Async.Start
                     | :? SyncJobDefinition as jobDef ->
-                        if ThreadPool.QueueUserWorkItem(fun i -> jobDef.Execute()) then
-                            ()
-                        else
-                            failwith "Sync job was not queued on thread pool"
+                        ThreadPool.QueueUserWorkItem(fun i -> jobDef.Execute())
+                        |> ignore
                     | _ -> failwith "Unknown job type"
 
-            Thread.Sleep(maxIterationDuration - (DateTimeOffset.Now - startTimeStamp))
+            // DateTimeOffset.Now - startTimeStamp = how long the job enqueuing took
+            let timeout =
+                maxIterationDuration - (DateTimeOffset.Now - startTimeStamp)
+            Thread.Sleep(
+                if timeout >= TimeSpan.Zero then timeout
+                else TimeSpan.Zero
+            )
 
     let Dispose disposing =
         if not(isDisposed) then
@@ -67,9 +71,6 @@ type Scheduler(tzInfo: TimeZoneInfo) =
     /// Adds a new asynchronous job to the scheduler.
     member this.NewAsyncJob cronExpr job =
         jobs.Add(AsyncJobDefinition(CronExpression.Parse(cronExpr), tzInfo, job))
-
-    member this.NewDatabaseJob cronExpr job =
-        jobs.Add(DbJobDefinition(cronExpr, tzInfo, job))
 
     /// Starts scheduler and blocks the current thread.
     member this.Start() =

@@ -5,7 +5,10 @@ open System.Threading
 open System.Threading.Tasks
 
 [<Sealed>]
-type internal AsyncJobDefinition(cronExp, tzInfo, job: Func<CancellationToken, Task>) =
+type internal AsyncJobDefinition(
+    cronExp,
+    tzInfo,
+    job: Func<CancellationToken, Task>) =
     inherit JobDefinition(cronExp, tzInfo)
     member this.ExecuteAsync(token: CancellationToken) =
         task {
