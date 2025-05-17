@@ -4,7 +4,7 @@
         <TargetFramework>net9.0</TargetFramework>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <Nullable>enable</Nullable>
-        <AnalysisLevel>latest-recommended</AnalysisLevel>
+        <AnalysisLevel>latest-all</AnalysisLevel>
 
         <!-- Publish section -->
         <InvariantGlobalization>true</InvariantGlobalization>
@@ -15,9 +15,11 @@
     </ItemGroup>
 
     <ItemGroup>
+        <InternalsVisibleTo Include="FsCron.UnitTests" />
         <Compile Include="JobDefinition.fs" />
         <Compile Include="SyncJobDefinition.fs" />
         <Compile Include="AsyncJobDefinition.fs" />
+        <Compile Include="Calc.fs" />
         <Compile Include="Scheduler.fs" />
     </ItemGroup>
 

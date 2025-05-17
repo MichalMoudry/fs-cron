@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 
 namespace FsCron.TestApp.Console;
 
-public static partial class Log
+internal static partial class Log
 {
     [LoggerMessage(
         LogLevel.Error,

@@ -13,8 +13,5 @@ type internal JobDefinition(cronExpr: CronExpression, tzInfo: TimeZoneInfo) =
         match currentDate.HasValue with
         | true -> currentDate.Value
         | false -> DateTimeOffset.MinValue
-    /// A diff between now and job's supposed run time.
-    member this.NextOccurrenceDiff with get() =
-        this.NextOccurrence - DateTimeOffset.Now
     member this.UpdateNextOccurrence() =
         currentDate <- cronExpr.GetNextOccurrence(DateTimeOffset.Now, tzInfo)

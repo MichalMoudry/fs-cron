@@ -24,8 +24,7 @@ type Scheduler(tzInfo: TimeZoneInfo) =
 
             for job in jobs do
                 // TODO: Investigate retry with <= 0 condition
-                let diff = Math.Round(job.NextOccurrenceDiff.TotalSeconds) 
-                if diff <= 0 then
+                if Calc.GetNextJobOccurrenceDiff(job.NextOccurrence) < 0 then
                     match job with
                     | :? AsyncJobDefinition as jobDef ->
                         jobDef.ExecuteAsync(cancellationToken)

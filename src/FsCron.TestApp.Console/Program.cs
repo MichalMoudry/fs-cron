@@ -1,31 +1,22 @@
 ﻿using FsCron;
-using FsCron.TestApp.Console;
-using Microsoft.Extensions.Logging;
 
 Console.WriteLine("Hello, World!");
 
-using var loggerFactory = LoggerFactory.Create(
+/*using var loggerFactory = LoggerFactory.Create(
     builder => builder.AddConsole()
 );
-var logger = loggerFactory.CreateLogger<Program>();
+var logger = loggerFactory.CreateLogger<Program>();*/
 
-try
-{
-    await using var scheduler = new Scheduler(TimeZoneInfo.Local);
-    scheduler.NewAsyncJob(
-        "* * * * *",
-        async token =>
-        {
-            Console.WriteLine($"[{DateTimeOffset.Now}] Test print");
-            await Task.Delay(500, token);
-            throw new InvalidOperationException("test exception");
-        }
-    );
+using var scheduler = new Scheduler(TimeZoneInfo.Local);
+scheduler.NewAsyncJob(
+    "* * * * *",
+    async token =>
+    {
+        Console.WriteLine($"[{DateTimeOffset.Now}] Test print");
+        await Task.Delay(500, token).ConfigureAwait(false);
+        throw new InvalidOperationException("test exception");
+    }
+);
 
-    Console.WriteLine("Starting scheduler");
-    scheduler.Start();
-}
-catch (Exception e)
-{
-    Log.LogSchedulerErr(logger, e);
-}
+Console.WriteLine("Starting scheduler");
+scheduler.Start();
