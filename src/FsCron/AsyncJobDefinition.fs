@@ -12,6 +12,6 @@ type internal AsyncJobDefinition(
     inherit JobDefinition(cronExp, tzInfo)
     member this.ExecuteAsync(token: CancellationToken) =
         task {
-            do! job.Invoke(token)
-            this.UpdateNextOccurrence()
+            try do! job.Invoke(token)
+            finally this.UpdateNextOccurrence()
         }
