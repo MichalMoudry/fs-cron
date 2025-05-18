@@ -5,7 +5,7 @@ open Cronos
 open NUnit.Framework
 
 [<Test>]
-let TestSyncJobDefinitionInit () =
+let TestSyncJobDefinitionInit() =
     let job = SyncJobDefinition(
         CronExpression.Parse("* * * * *"),
         TimeZoneInfo.Utc,
@@ -13,6 +13,8 @@ let TestSyncJobDefinitionInit () =
     )
     let now = DateTimeOffset.UtcNow
 
+    // +1 because the cron expr. is * * * * *
+    let expectedMinute = now.Minute + 1
     Assert.That(
         job.NextOccurrence,
         Is.EqualTo(
@@ -21,7 +23,7 @@ let TestSyncJobDefinitionInit () =
                 now.Month,
                 now.Day,
                 now.Hour,
-                now.Minute + 1, // +1 because the cron expr. is * * * * *
+                expectedMinute,
                 0,
                 now.Offset
             )
