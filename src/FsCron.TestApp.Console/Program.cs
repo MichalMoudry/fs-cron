@@ -1,4 +1,5 @@
-﻿using FsCron;
+﻿using Cronos;
+using FsCron;
 
 Console.WriteLine("Hello, World!");
 
@@ -8,13 +9,21 @@ Console.WriteLine("Hello, World!");
 var logger = loggerFactory.CreateLogger<Program>();*/
 
 using var scheduler = new Scheduler(TimeZoneInfo.Local);
-scheduler.NewAsyncJob(
+/*scheduler.NewAsyncJob(
     "* * * * *",
     async token =>
     {
         Console.WriteLine($"[{DateTimeOffset.Now}] Test print");
         await Task.Delay(500, token).ConfigureAwait(false);
         throw new InvalidOperationException("test exception");
+    }
+);*/
+scheduler.NewAsyncJobFromExpr(
+    CronExpression.EverySecond,
+    _ =>
+    {
+        Console.WriteLine($"[{DateTimeOffset.Now}] Test print");
+        return Task.CompletedTask;
     }
 );
 

@@ -74,6 +74,9 @@ type Scheduler(tzInfo: TimeZoneInfo) =
     member this.NewAsyncJob cronExpr job =
         jobs.Add(AsyncJobDefinition(CronExpression.Parse(cronExpr), tzInfo, job))
 
+    member this.NewAsyncJobFromExpr expr job =
+        jobs.Add(AsyncJobDefinition(expr, tzInfo, job))
+
     /// Starts scheduler and blocks the current thread.
     member this.Start() =
         if not(isRunning) then
