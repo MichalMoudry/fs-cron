@@ -1,4 +1,4 @@
-﻿module FsCron.UnitTests
+﻿module FsCron.SyncJobDefinitionTests
 
 open System
 open Cronos

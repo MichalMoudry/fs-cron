@@ -13,7 +13,7 @@ type Scheduler(tzInfo: TimeZoneInfo) =
     let tokenSource = new CancellationTokenSource()
     let mutable isDisposed = false
     let mutable isRunning = false
-    let maxIterationDuration = TimeSpan.FromSeconds(int64(1))
+    let maxIterationDuration = TimeSpan.FromMilliseconds(1000)
 
     let startInternal() =
         let mutable startTimeStamp = DateTimeOffset.MinValue
@@ -66,6 +66,9 @@ type Scheduler(tzInfo: TimeZoneInfo) =
     /// Adds a new synchronous job to the scheduler.
     member this.NewJob cronExpr job =
         jobs.Add(SyncJobDefinition(CronExpression.Parse(cronExpr), tzInfo, job))
+
+    member this.NewJobFromExpr expr job =
+        jobs.Add(SyncJobDefinition(expr, tzInfo, job))
 
     /// Adds a new asynchronous job to the scheduler.
     member this.NewAsyncJob cronExpr job =
