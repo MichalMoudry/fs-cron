@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <Nullable>enable</Nullable>
+        <AnalysisLevel>latest-all</AnalysisLevel>
+
+        <!-- Publish section -->
+        <InvariantGlobalization>true</InvariantGlobalization>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Cronos" Version="0.11.0" />
+        <PackageReference Update="FSharp.Core" Version="9.0.300" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="FsCron.UnitTests" />
+        <Compile Include="JobDefinition.fs" />
+        <Compile Include="SyncJobDefinition.fs" />
+        <Compile Include="AsyncJobDefinition.fs" />
+        <Compile Include="Calc.fs" />
+        <Compile Include="IStorage.fs" />
+        <Compile Include="Scheduler.fs" />
+    </ItemGroup>
+
+</Project>
