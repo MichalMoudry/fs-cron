@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <RootNamespace>FsCron.Storage.RemoteCache</RootNamespace>
+        <AnalysisLevel>latest-all</AnalysisLevel>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Compile Include="RemoteCacheStorage.fs" />
+      <Compile Include="TypeExtensions.fs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\FsCron\FsCron.fsproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="StackExchange.Redis" Version="2.8.37" />
+    </ItemGroup>
+
+</Project>
