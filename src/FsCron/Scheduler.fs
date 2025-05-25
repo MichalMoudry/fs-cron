@@ -11,7 +11,7 @@ open Cronos
 type Scheduler(tzInfo: TimeZoneInfo) =
     let jobs = List<JobDefinition>()
     let tokenSource = new CancellationTokenSource()
-    let mutable storage: option<IStorage> = None
+    let mutable storage = option<IStorage>.None
     let maxIterationDuration = TimeSpan.FromMilliseconds(1000)
     let mutable isDisposed = false
     let mutable isRunning = false
@@ -78,9 +78,8 @@ type Scheduler(tzInfo: TimeZoneInfo) =
     member this.NewAsyncJobFromExpr expr job =
         jobs.Add(AsyncJobDefinition(expr, tzInfo, job))
 
-    /// Adds a storage that can be used by the scheduler.
-    member this.AddStorage(genericStorage: IStorage) =
-        storage <- Some(genericStorage)
+    member this.SetExternalStorage(externalStorage) =
+        storage <- Some(externalStorage)
 
     /// Starts scheduler and blocks the current thread.
     member this.Start() =
@@ -94,3 +93,5 @@ type Scheduler(tzInfo: TimeZoneInfo) =
         if not(isRunning) then
             Thread(startInternal, IsBackground = true).Start()
             isRunning <- true
+
+    with override this.ToString() = $"Scheduler(NumberOfJobs = {jobs.Count}, Tz = {tzInfo.BaseUtcOffset}, IsRunning = {isRunning})"

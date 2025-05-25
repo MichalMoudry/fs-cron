@@ -1,12 +1,14 @@
 ﻿using Cronos;
 using FsCron;
+using FsCron.TestApp.Console;
+using Microsoft.Extensions.Logging;
 
 Console.WriteLine("Hello, World!");
 
-/*using var loggerFactory = LoggerFactory.Create(
+using var loggerFactory = LoggerFactory.Create(
     builder => builder.AddConsole()
 );
-var logger = loggerFactory.CreateLogger<Program>();*/
+var logger = loggerFactory.CreateLogger<Program>();
 
 using var scheduler = new Scheduler(TimeZoneInfo.Local);
 /*scheduler.NewAsyncJob(
@@ -22,7 +24,7 @@ scheduler.NewAsyncJobFromExpr(
     CronExpression.EverySecond,
     _ =>
     {
-        Console.WriteLine($"[{DateTimeOffset.Now}] Test print - {Guid.CreateVersion7()}");
+        Log.LogTestPrint(logger, DateTimeOffset.Now, Guid.CreateVersion7());
         return Task.CompletedTask;
     }
 );

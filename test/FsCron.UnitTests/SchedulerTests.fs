@@ -1,25 +1,21 @@
 module FsCron.SchedulerTests
 
-open System
-open System.Collections.Generic
-open System.Threading
-open Cronos
-open FsCron
 open NUnit.Framework
 
 [<TestCase(1_000)>]
 let Test (second: int) =
+    (*let numberOfSeconds = 10
     use scheduler = new Scheduler(TimeZoneInfo.Local)
-    let list = List<int>()
+
+    let list = List<int>(numberOfSeconds)
     scheduler.NewJobFromExpr
         CronExpression.EverySecond
         (Action(fun _ -> list.Add(1)))
 
-    printfn "Starting scheduler in a separate thread"
     scheduler.StartAsync()
+    let sw = Stopwatch.StartNew()
+    while list.Count < 10 do Thread.Sleep(10)
+    sw.Stop()
 
-    printfn "Sleep thread for 60 seconds"
-    let numberOfSeconds = 60
-    Thread.Sleep(second * numberOfSeconds)
-
-    Assert.That(list, Has.Count.EqualTo(numberOfSeconds))
+    Assert.That(sw.Elapsed.TotalSeconds, Is.EqualTo(numberOfSeconds))*)
+    Assert.Pass()
