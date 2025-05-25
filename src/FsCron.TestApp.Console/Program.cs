@@ -22,7 +22,7 @@ scheduler.NewAsyncJobFromExpr(
     CronExpression.EverySecond,
     _ =>
     {
-        Console.WriteLine($"[{DateTimeOffset.Now}] Test print");
+        Console.WriteLine($"[{DateTimeOffset.Now}] Test print - {Guid.CreateVersion7()}");
         return Task.CompletedTask;
     }
 );

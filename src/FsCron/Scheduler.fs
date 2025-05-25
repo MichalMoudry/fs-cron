@@ -11,9 +11,10 @@ open Cronos
 type Scheduler(tzInfo: TimeZoneInfo) =
     let jobs = List<JobDefinition>()
     let tokenSource = new CancellationTokenSource()
+    let mutable storage: option<IStorage> = None
+    let maxIterationDuration = TimeSpan.FromMilliseconds(1000)
     let mutable isDisposed = false
     let mutable isRunning = false
-    let maxIterationDuration = TimeSpan.FromMilliseconds(1000)
 
     let startInternal() =
         let mutable startTimeStamp = DateTimeOffset.MinValue
@@ -38,10 +39,10 @@ type Scheduler(tzInfo: TimeZoneInfo) =
             // DateTimeOffset.Now - startTimeStamp = how long the job enqueuing took
             let timeout =
                 maxIterationDuration - (DateTimeOffset.Now - startTimeStamp)
-            Thread.Sleep(
-                if timeout >= TimeSpan.Zero then timeout
-                else TimeSpan.Zero
-            )
+            if timeout < TimeSpan.Zero then
+                failwith "Iteration took too long"
+            else
+                Thread.Sleep(timeout)
 
     let Dispose disposing =
         if not(isDisposed) then
@@ -76,6 +77,10 @@ type Scheduler(tzInfo: TimeZoneInfo) =
 
     member this.NewAsyncJobFromExpr expr job =
         jobs.Add(AsyncJobDefinition(expr, tzInfo, job))
+
+    /// Adds a storage that can be used by the scheduler.
+    member this.AddStorage(genericStorage: IStorage) =
+        storage <- Some(genericStorage)
 
     /// Starts scheduler and blocks the current thread.
     member this.Start() =
