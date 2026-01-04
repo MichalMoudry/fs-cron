@@ -7,7 +7,6 @@ open System.Threading.Tasks
 open Cronos
 
 /// A job scheduler that runs in either synchronous or asynchronous mode.
-[<Sealed>]
 type Scheduler(tzInfo: TimeZoneInfo) =
     let jobs = List<JobDefinition>()
     let tokenSource = new CancellationTokenSource()
@@ -17,24 +16,27 @@ type Scheduler(tzInfo: TimeZoneInfo) =
     let mutable isRunning = false
 
     let startInternal() =
+        /// A method for executing a list of jobs.
+        let rec executeJobs (jobs: List<JobDefinition>) index token =
+            if index >= jobs.Count then
+                ()
+            else
+                let job = jobs[index]
+                if Calc.GetNextJobOccurrenceDiff(job.NextOccurrence) < 0 then
+                    match job with
+                    | :? AsyncJobDefinition as def ->
+                        def.ExecuteAsync(token) |> Async.AwaitTask |> Async.Start
+                    | :? SyncJobDefinition as def ->
+                        ThreadPool.QueueUserWorkItem(fun i -> def.Execute())
+                        |> ignore
+                    | _ -> ()
+                executeJobs jobs (index + 1) token
         let mutable startTimeStamp = DateTimeOffset.MinValue
         let cancellationToken = tokenSource.Token
 
         while not(cancellationToken.IsCancellationRequested) do
             startTimeStamp <- DateTimeOffset.Now
-
-            for job in jobs do
-                // TODO: Investigate retry with <= 0 condition
-                if Calc.GetNextJobOccurrenceDiff(job.NextOccurrence) < 0 then
-                    match job with
-                    | :? AsyncJobDefinition as jobDef ->
-                        jobDef.ExecuteAsync(cancellationToken)
-                        |> Async.AwaitTask
-                        |> Async.Start
-                    | :? SyncJobDefinition as jobDef ->
-                        ThreadPool.QueueUserWorkItem(fun i -> jobDef.Execute())
-                        |> ignore
-                    | _ -> failwith "Unknown job type"
+            executeJobs jobs 0 cancellationToken
 
             // DateTimeOffset.Now - startTimeStamp = how long the job enqueuing took
             let timeout =
