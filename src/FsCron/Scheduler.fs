@@ -10,7 +10,7 @@ open Cronos
 type Scheduler(tzInfo: TimeZoneInfo) =
     let jobs = List<JobDefinition>()
     let tokenSource = new CancellationTokenSource()
-    let maxIterationDuration = TimeSpan.FromMilliseconds(1000)
+    let maxIterationDuration = TimeSpan.FromMilliseconds(1000L)
     let mutable isDisposed = false
     let mutable isRunning = false
 
