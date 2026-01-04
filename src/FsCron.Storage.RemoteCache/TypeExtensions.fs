@@ -1,2 +1,0 @@
-namespace FsCron.Storage.RemoteCache
-

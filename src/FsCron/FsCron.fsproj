@@ -21,7 +21,6 @@
         <Compile Include="SyncJobDefinition.fs" />
         <Compile Include="AsyncJobDefinition.fs" />
         <Compile Include="Calc.fs" />
-        <Compile Include="IStorage.fs" />
         <Compile Include="Scheduler.fs" />
     </ItemGroup>
 

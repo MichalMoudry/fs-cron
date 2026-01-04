@@ -10,7 +10,6 @@ open Cronos
 type Scheduler(tzInfo: TimeZoneInfo) =
     let jobs = List<JobDefinition>()
     let tokenSource = new CancellationTokenSource()
-    let mutable storage = option<IStorage>.None
     let maxIterationDuration = TimeSpan.FromMilliseconds(1000)
     let mutable isDisposed = false
     let mutable isRunning = false
@@ -79,9 +78,6 @@ type Scheduler(tzInfo: TimeZoneInfo) =
 
     member this.NewAsyncJobFromExpr expr job =
         jobs.Add(AsyncJobDefinition(expr, tzInfo, job))
-
-    member this.SetExternalStorage(externalStorage) =
-        storage <- Some(externalStorage)
 
     /// Starts scheduler and blocks the current thread.
     member this.Start() =
